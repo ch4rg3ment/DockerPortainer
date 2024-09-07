@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+#MariaDB Container
+  mariadb:
+    image: mariadb:10.7
+    container_name: mariadb-grafana
+    hostname: mariadb-grafana
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=graf
+      - MARIADB_DATABASE=graf
+      - MARIADB_USER=graf
+      - MARIADB_PASSWORD=graf
+
+#Grafana Container
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    ports:
+      - 3000:3000
+    restart: always
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+      
+volumes:
+  grafana-data:

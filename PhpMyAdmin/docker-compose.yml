@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 80:80 #Modifier le port a votre guise !
+    environment:
+      - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT: 100M

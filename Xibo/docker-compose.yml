@@ -1,0 +1,75 @@
+version: "3"
+
+services:
+  cms-db:
+    image: mysql:5.7
+    container_name: cms-db
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - '3309:3306'
+    volumes:
+      - cms-db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=xibo_cms
+      - MYSQL_USER=xibo
+      - MYSQL_PASSWORD=xiboPassword
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    networks:
+      - xibo-network
+
+  cms-web:
+    image: xibosignage/xibo-cms:latest
+    container_name: cms-web
+    restart: always
+    ports:
+      - "8083:80"
+    environment:
+      - XMR_HOST=cms-xmr
+      - XMR_PORT=50001
+      - XMR_PUB_KEY=*****
+      - XMR_SUB_KEY=*****
+      - MYSQL_HOST=cms-db
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=xibo_cms
+      - MYSQL_USER=xibo
+      - MYSQL_PASSWORD=xiboPassword
+      - CMS_SERVER_NAME=localhost
+      - CMS_ADMIN_URI=/admin
+      - CMS_DATASET_PROFILE=default
+      - CMS_ENABLE_SSL=0
+      - CMS_SMTP_ENCRYPTION=0
+      - CMS_SMTP_AUTH=1
+      - CMS_SMTP_HOST=smtp.gmail.com
+      - CMS_SMTP_PORT=587
+      - CMS_SMTP_USERNAME=*****
+      - CMS_SMTP_PASSWORD=*****
+      - CMS_SMTP_FROM_ADDRESS=*****
+volumes:
+      - cms-web:/var/www/cms/library
+    networks:
+      - xibo-network
+
+  cms-xmr:
+    image: xibosignage/xibo-xmr:latest
+    container_name: cms-xmr
+    restart: always
+    ports:
+      - "9505:9505"
+    environment:
+      - XMR_PUB_KEY=*****
+      - XMR_SUB_KEY=*****
+      - MYSQL_HOST=cms-db
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=xibo_cms
+      - MYSQL_USER=xibo
+      - MYSQL_PASSWORD=xiboPassword
+    networks:
+      - xibo-network
+
+networks:
+  xibo-network:
+
+volumes:
+  cms-db:
+  cms-web:
